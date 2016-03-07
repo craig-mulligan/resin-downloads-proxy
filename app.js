@@ -5,10 +5,12 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var routes = require('./routes');
+var api = require('./routes/api');
 
 var app = express();
+
+// process.env.URL = "https://craig-ocr.s3-us-west-2.amazonaws.com/"
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,7 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/api', api);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -56,5 +58,5 @@ app.use(function(err, req, res, next) {
   });
 });
 
-
+// console.log(app._router.stack)
 module.exports = app;
