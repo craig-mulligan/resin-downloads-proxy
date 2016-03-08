@@ -6,3 +6,20 @@ body {
 a {
   color: #00B7FF;
 }
+
+table {
+  border-collapse: collapse;
+}
+
+table td, table th {
+    border: 1px solid #d4d4d4;
+    text-align: center;
+    padding: 5px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    vertical-align: top;
+}
+
+table th {
+  background: #eaebee;
+}

@@ -26,7 +26,6 @@ function getS3Data(marker, html) {
   var s3_rest_url = createS3QueryUrl(marker);
   // set loading notice
   $('#listing').html('<img src="//assets.okfn.org/images/icons/ajaxload-circle.gif" />');
-  console.log(s3_rest_url);
   $.get(s3_rest_url)
     .done(function(data) {
       // clear loading notice
@@ -37,7 +36,7 @@ function getS3Data(marker, html) {
       if (info.nextMarker != "null") {
         getS3Data(info.nextMarker, html);
       } else {
-        document.getElementById('listing').innerHTML = '<pre>' + html + '</pre>';
+        document.getElementById('listing').innerHTML = '<table>' + html + '</table>';
       }
     })
     .fail(function(error) {
@@ -132,8 +131,10 @@ function prepareTable(info) {
     ;
   var cols = [ 45, 30, 15 ];
   var content = [];
-  content.push(padRight('Last Modified', cols[1]) + '  ' + padRight('Size', cols[2]) + 'Key \n');
-  content.push(new Array(cols[0] + cols[1] + cols[2] + 4).join('-') + '\n');
+  var tableHeadings = '<tr><th>Last Modified</th><th>Size</th><th>Name</th></tr>'
+  content.push(tableHeadings);
+  // content.push(padRight('Last Modified', cols[1]) + '  ' + padRight('Size', cols[2]) + 'Key \n');
+  // content.push(new Array(cols[0] + cols[1] + cols[2] + 4).join('-') + '\n');
 
   // add the ../ at the start of the directory listing, unless when at the root dir already
   if (prefix && prefix !== S3B_ROOT_DIR) {
@@ -171,9 +172,9 @@ function prepareTable(info) {
 
 function renderRow(item, cols) {
   var row = '';
-  row += padRight(item.LastModified, cols[1]) + '  ';
-  row += padRight(item.Size, cols[2]);
-  row += '<a href="' + item.href + '">' + item.keyText + '</a>';
+  // row += padRight(item.LastModified, cols[1]) + '  ';
+  // row += padRight(item.Size, cols[2]);
+  row += '<tr><td>'+ item.LastModified + '</td><td>'+ item.Size + '</td><td><a href="' + item.href + '">' + item.keyText + '</a></td>';
   return row;
 }
 

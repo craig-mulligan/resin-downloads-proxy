@@ -1,17 +1,16 @@
 var jsdom = require('jsdom');
 var $ = require('jquery')(jsdom.jsdom().defaultView);
 var compare = require('compare-semver');
+var request = require('request');
 /*!
  * Module dependencies.
  */
-
-var request = require('request');
 
 module.exports = function (req, callback) {
   request(process.env.URL + '?delimiter=/&prefix=' + req.params.product + '/', function (error, response, body) {
     if (!error && response.statusCode == 200) {
       getVersions($(body), req.params.product, function(versions){
-        callback(getLatestUrl(versions, req.params.product, req.params.os))
+        getLatestUrl(versions, req.params.product, req.params.os)
       });
     }
   })
@@ -42,7 +41,16 @@ function getExt(os) {
     case "windows":
       return ".exe"
       break;
+    case "-x64.exe":
+      return ".exe"
+      break;
+    case "linux":
+      return "-linux-ia32.tar.gz"
+      break;
+    case "linux64":
+      return "-linux-x64.tar.gz"
+      break;
     default:
-      console.log("Sorry, nothing matches " + os);
+      return ".exe"
   }
 }
