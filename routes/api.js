@@ -12,8 +12,6 @@ router.use(function(req, res, next) {
 
 // /api/latest/:product/:os
 router.get('/latest/:product/:os', function(req, res) {
-  // latest(req)
-  request('https://craig-ocr.s3-us-west-2.amazonaws.com/etcher/3.4.1/etcher.dmg').pipe(res);
   latest(req, function(url){
     console.log(url);
     request(url).pipe(res);

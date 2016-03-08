@@ -9,7 +9,7 @@ var routes = require('./routes');
 var api = require('./routes/api');
 
 var app = express();
-// process.env.URL="https://resin-production-downloads.s3.amazonaws.com"
+process.env.URL="https://resin-production-downloads.s3.amazonaws.com"
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');

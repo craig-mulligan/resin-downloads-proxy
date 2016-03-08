@@ -1,35 +1,31 @@
-var jsdom = require('jsdom');
-var $ = require('jquery')(jsdom.jsdom().defaultView);
-var compare = require('compare-semver');
+var parseString = require('xml2js').parseString;
 var request = require('request');
-/*!
- * Module dependencies.
- */
+var _ = require('lodash');
+var compare = require('compare-semver');
 
 module.exports = function (req, callback) {
-  request(process.env.URL + '?delimiter=/&prefix=' + req.params.product + '/', function (error, response, body) {
+  request(process.env.URL + '?delimiter=/&prefix=' + req.params.product + '/', function (error, response, xml) {
     if (!error && response.statusCode == 200) {
-      getVersions($(body), req.params.product, function(versions){
-        getLatestUrl(versions, req.params.product, req.params.os)
+      parseString(xml, function (err, result) {
+          getVersions(result.ListBucketResult.CommonPrefixes, req.params.product, function(versions){
+            console.log("versions: " + versions)
+            callback(getLatestUrl(versions, req.params.product, req.params.os))
+          })
       });
     }
   })
-};
+}
 
-function getVersions(xml, product, callback){
-  var versions = []
-  var directories = $.map(xml.find('CommonPrefixes'), function(item) {
-    item = $(item);
-    var path = item.find('Prefix').text()
-    var path = path.substring(product.length + 1, path.length - 1)
-    versions.push(path);
-  });
-  callback(versions)
+function getVersions(obj, product, callback) {
+    callback(_.map(obj, function(v) {
+      console.log(v.Prefix[0])
+      return v.Prefix[0].substring(product.length + 1, v.Prefix[0].length - 1);
+    }))
 }
 
 function getLatestUrl(versions, product, os) {
   var maxSemver = compare.max(versions);
-  url = process.env.URL + "/" + product + "/" + maxSemver + "/" + product + getExt(os)
+  url = process.env.URL + "/" + product + "/" + maxSemver + "/" + product.capitalizeFirstLetter() + getExt(os)
   return url
 }
 
@@ -53,4 +49,8 @@ function getExt(os) {
     default:
       return ".exe"
   }
+}
+
+String.prototype.capitalizeFirstLetter = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
 }
